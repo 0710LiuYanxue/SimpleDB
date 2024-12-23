@@ -1,0 +1,1 @@
+insert into test (id, name, age) values (10, 'yuni', 20), (11, 'xiao', 22), (12, 'xueqiu', 24)

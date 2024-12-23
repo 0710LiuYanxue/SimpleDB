@@ -1,0 +1,1 @@
+create table test (id INT PRIMARY KEY, name VARCHAR(100), age INT);
