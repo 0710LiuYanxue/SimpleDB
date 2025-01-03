@@ -16,7 +16,7 @@ fn main() -> Result<()> {
     // 创建数据库
     let mut db = SimpleDB::default();
     println!("Welcome to Snow's SimpleDB!");
-    // 初始化一个内存表t1和三个内存表employee、rank和department
+    // 初始化一个内存表t1和三个内存表employee、rank和department以及person、knows表
     db.create_csv_table("t1", "data/test_data.csv", CsvConfig::default())?;
     db.create_csv_table("person", "data/person.csv", CsvConfig::default())?;
     db.create_csv_table("knows", "data/knows.csv", CsvConfig::default())?;

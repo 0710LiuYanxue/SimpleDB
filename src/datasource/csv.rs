@@ -156,7 +156,11 @@ impl CsvTable {
             *batch = RecordBatch::try_new(Arc::new(schema.clone().into()), columns)?;
         }
         Ok(batches)
-
+        // // 需要删除的表的名称
+        // let table_name = table.schema().fields[0].qualifier().unwrap().clone();
+        // println!("table_name: {}", table_name);
+        // // 返回删除后的表
+        // Ok(Arc::new(CsvTable {schema, batches }))
     }
     
 
