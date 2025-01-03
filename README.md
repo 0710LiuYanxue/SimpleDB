@@ -12,13 +12,13 @@
     * **所有权（Ownership）**：Rust的所有权机制是其内存管理的核心概念。每个内存块只能由一个变量拥有，当变量离开作用域时，内存会被自动释放。这种机制不仅避免了内存泄漏，也防止了双重释放等错误。
     * **借用（Borrowing）**：Rust通过借用机制允许内存被多个引用使用，但对引用的使用施加了严格的规则：不可变引用：多个引用可以同时访问，但不可修改数据。可变引用：同一时间内只能有一个可变引用，确保修改的安全性。这种严格的引用规则有效地防止了数据竞争和悬挂指针。
     * **编译时内存检查**：Rust的编译器在编译阶段对代码进行深入分析，将许多潜在的内存错误（如访问越界、空指针解引用等）捕获。这种设计虽然增加了编译时间和学习成本，但显著提高了代码的安全性和可靠性。
-    * **编译时内存检查**：Rust内置的“无数据竞争”保障使其在处理并发任务时更加安全。通过编译时的线程安全检查，Rust允许开发者构建高效且安全的多线程程序，这是构建高性能查询引擎的重要能力。
+    * **并发安全**：Rust内置的“无数据竞争”保障使其在处理并发任务时更加安全。通过编译时的线程安全检查，Rust允许开发者构建高效且安全的多线程程序，这是构建高性能查询引擎的重要能力。
 
 
 ## Architecture
 1. Overview
 
-    SimpleDB是利用Rust实现的支持SQL接口的查询引擎，主要有五个组成部分：
+    **SimpleDB**是利用Rust实现的支持SQL接口的查询引擎，主要有五个组成部分：
     * **Parser**：将用户输入的查询解析为AST，并通过TableRef 与Catalog 交互，解析表的信息；
     * **LogicalPlanner**：根据解析后的AST生成逻辑执行计划；
     * **Optimizer**：优化逻辑计划，生成更高效的执行计划；
@@ -50,22 +50,22 @@
     ```
 2. Parser
 
-    通过实现一个**SQLParser**类，集成可扩展的SQL词法分析器和解析器**sqlparser**实现将用户输入的SQL语句解析为AST。SimpleDB中选择使用通用的SQL方言dialect::GenericDialect，可根据不同的应用需求进行修改。
+    通过实现一个**SQLParser**结构体，集成可扩展的SQL词法分析器和解析器**sqlparser**实现将用户输入的SQL语句解析为AST。SimpleDB中选择使用通用的SQL方言dialect::GenericDialect，可根据不同的应用需求进行修改。
 
     ![query_engine](./figures/Parser.drawio.png)
 3. LogicalPlanner
 
-    通过实现一个**SQLPlanner**类实现将解析器生成的statement转换为逻辑执行计划。SimpleDB中通过一个DataFrame结构体将多个逻辑计划组合在一起，不存在TableScan的实现，因为其通常是最底层的逻辑计划。
+    通过实现一个**SQLPlanner**结构体实现将解析器生成的statement转换为逻辑执行计划。SimpleDB中通过一个DataFrame结构体将多个逻辑计划组合在一起，不存在TableScan的实现，因为其通常是最底层的逻辑计划。
 
     ![query_engine](./figures/LogicalPlanner.drawio.png)
 4. Optimizer
 
-    Optimizer结构体表示一个查询优化器，包含一个 rules字段，用来存储所有应用的优化规则。通过OptimizerRule trait定义了优化规则的接口，每个规则需实现optimize方法，接受一个 LogicalPlan作为输入，并返回优化后的LogicalPlan。SimpleDB中目前只实现了Projection下推，将投影操作下推，即提前选择需要的列，减少中间结果的元组大小。
+    **Optimizer**结构体表示一个查询优化器，包含一个 rules字段，用来存储所有应用的优化规则。通过OptimizerRule trait定义了优化规则的接口，每个规则需实现optimize方法，接受一个 LogicalPlan作为输入，并返回优化后的LogicalPlan。SimpleDB中目前只实现了Projection下推，将投影操作下推，即提前选择需要的列，减少中间结果的元组大小。
     ![query_engine](./figures/Optimizer.drawio.png)
 
 5. PhysicalPlanner
 
-    通过实现一个QueryPlanner类，为每个逻辑操作生成相应的物理执行计划。通过递归调用create_physical_plan的方式，对不同类型的逻辑计划调用其在物理计划中的create函数生成对应的物理计划PhysicalPlanRef；注意在逻辑计划阶段处理得到的LogicalExpr需要通过create_physical_expression单独处理为PhysicalExprRef后，再与前面的物理计划进行合并。
+    通过实现一个**QueryPlanner**结构体，为每个逻辑操作生成相应的物理执行计划。通过递归调用create_physical_plan的方式，对不同类型的逻辑计划调用其在物理计划中的create函数生成对应的物理计划PhysicalPlanRef。在逻辑计划阶段处理得到的LogicalExpr需要通过create_physical_expression单独处理为PhysicalExprRef后，再与前面的物理计划进行合并。
     ![query_engine](./figures/PhysicalPlanner.drawio.png)
 
 ## How to use SimpleDB

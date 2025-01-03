@@ -1,5 +1,3 @@
-
-
 use arrow::{
     array::{Array, ArrayRef},
     datatypes::DataType,
