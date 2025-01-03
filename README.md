@@ -63,7 +63,7 @@ Rust作为一种系统级编程语言，以其独特的内存安全模型和强�
     ![query_engine](./doc/PhysicalPlanner.drawio.png)
 
 ## How to use SimpleDB
-    SimpleDB提供了支持SQL接口的交互式查询执行引擎，用户直接与SimpleDB交互，输入SQL查询，SimpleDB提供SQL查询接口，将用户的查询传递给后续的处理模块并输出查询结果。
+SimpleDB提供了支持SQL接口的交互式查询执行引擎，用户直接与SimpleDB交互，输入SQL查询，SimpleDB提供SQL查询接口，将用户的查询传递给后续的处理模块并输出查询结果。
 1. main.rs
     ```rust
     fn run_sql_on_db(db_arc: Arc<Mutex<SimpleDB>>, sql: &str) -> Result<Vec<RecordBatch>> {
